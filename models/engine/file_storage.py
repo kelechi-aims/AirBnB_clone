@@ -4,6 +4,13 @@ Module for the class FileSorage
 '''
 import json
 from os.path import exists
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 
 class FileStorage:
@@ -40,7 +47,9 @@ class FileStorage:
         '''
         Serialises and saves the objects to the JSON file.
         '''
-        serialized = {k: v.to_dict() for k, v in FileStorage.__objects.items()}
+        serialized = {}
+        for k, v in FileStorage.__objects.items():
+            serialized[k] = v.to_dict()
         with open(FileStorage.__file_path, 'w') as file:
             json.dump(serialized, file)
 
@@ -48,10 +57,18 @@ class FileStorage:
         '''
         Deserializes and loads the objects from the JSON file.
         '''
-        from models.base_model import BaseModel
-        if exists(FileStorage.__file_path):
+        classes = {
+            "BaseModel": BaseModel,
+            "User": User,
+            "State": State,
+            "City": City,
+            "Amenity": Amenity,
+            "Place": Place,
+            "Review": Review,
+        }
+        if os.path.exists(FileStorage.__file_path):
             with open(FileStorage.__file_path, 'r')as file:
                 data = json.load(file)
                 for key, value in data.items():
                    class_name = value['__class__']
-                   self.new(eval(class_name)(**value))
+                   FileStorage.__objects[key] = classes[class_name](**value)
