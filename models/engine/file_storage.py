@@ -4,13 +4,6 @@ Module for the class FileSorage
 '''
 import json
 from os.path import exists
-from models.base_model import BaseModel
-from models.user import User
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.place import Place
-from models.review import Review
 
 
 class FileStorage:
@@ -57,6 +50,14 @@ class FileStorage:
         '''
         Deserializes and loads the objects from the JSON file.
         '''
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.place import Place
+        from models.review import Review
+
         classes = {
             "BaseModel": BaseModel,
             "User": User,
@@ -66,9 +67,9 @@ class FileStorage:
             "Place": Place,
             "Review": Review,
         }
-        if os.path.exists(FileStorage.__file_path):
+        if exists(FileStorage.__file_path):
             with open(FileStorage.__file_path, 'r')as file:
                 data = json.load(file)
                 for key, value in data.items():
-                   class_name = value['__class__']
-                   FileStorage.__objects[key] = classes[class_name](**value)
+                    class_name = value['__class__']
+                    FileStorage.__objects[key] = classes[class_name](**value)
