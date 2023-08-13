@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-'''
-Converts these modules to package.
-'''
+"""Converts modules to package and store them."""
 from models.engine.file_storage import FileStorage
 
 
