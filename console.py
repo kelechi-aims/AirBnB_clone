@@ -14,12 +14,12 @@ from models.amenity import Amenity
 from models.review import Review
 
 
-def parse(line):
-    curly_braces = re.search(r"\{(.*?)\}", line)
+def parse(arg):
+    curly_braces = re.search(r"\{(.*?)\}", arg)
     brackets = re.search(r"\[(.*?)\]", arg)
     if curly_braces is None:
         if brackets is None:
-            return [i.strip(",") for i in split(line)]
+            return [i.strip(",") for i in split(arg)]
         else:
             lexer = split(line[:brackets.span()[0]])
             retl = [i.strip(",") for i in lexer]
@@ -44,7 +44,7 @@ class HBNBCommand(cmd.Cmd):
         "Review"
     }
 
-    def default(self, line):
+    def default(self, arg):
         argdict = {
             "all": self.do_all,
             "show": self.do_show,
@@ -64,8 +64,8 @@ class HBNBCommand(cmd.Cmd):
         print("*** Unknown syntax: {}".format(arg))
         return False
 
-    def do_create(self, line):
-        argl = parse(line)
+    def do_create(self, arg):
+        argl = parse(arg)
         if len(argl) == 0:
             print("** class name missing **")
         elif argl[0] not in HBNBCommand.__classes:
@@ -74,8 +74,8 @@ class HBNBCommand(cmd.Cmd):
             print(eval(argl[0])().id)
             storage.save()
 
-    def do_show(self, line):
-        argl = parse(line)
+    def do_show(self, arg):
+        argl = parse(arg)
         objdict = storage.all()
         if len(argl) == 0:
             print("** class name missing **")
@@ -88,8 +88,8 @@ class HBNBCommand(cmd.Cmd):
         else:
             print(objdict["{}.{}".format(argl[0], argl[1])])
 
-    def do_destroy(self, line):
-        argl = parse(line)
+    def do_destroy(self, arg):
+        argl = parse(arg)
         objdict = storage.all()
         if len(argl) == 0:
             print("** class name missing **")
@@ -103,8 +103,8 @@ class HBNBCommand(cmd.Cmd):
             del objdict["{}.{}".format(argl[0], argl[1])]
             storage.save()
 
-    def do_all(self, line):
-        argl = parse(line)
+    def do_all(self, arg):
+        argl = parse(arg)
         if len(argl) > 0 and argl[0] not in HBNBCommand.__classes:
             print("** class doesn't exist **")
         else:
@@ -116,16 +116,16 @@ class HBNBCommand(cmd.Cmd):
                     objl.append(obj.__str__())
             print(objl)
 
-    def do_count(self, line):
-        argl = parse(line)
+    def do_count(self, arg):
+        argl = parse(arg)
         count = 0
         for obj in storage.all().values():
             if argl[0] == obj.__class__.__name__:
                 count += 1
         print(count)
 
-    def do_update(self, line):
-        argl = parse(line)
+    def do_update(self, arg):
+        argl = parse(arg)
         objdict = storage.all()
 
         if len(argl) == 0:
